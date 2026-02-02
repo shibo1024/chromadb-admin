@@ -30,9 +30,8 @@ export async function POST(request: Request) {
       'Content-Type': 'application/json',
     }
     if (apiKey?.trim()) {
-      requestHeaders['Authorization'] = apiKey.startsWith('Bearer ')
-        ? apiKey
-        : `Bearer ${apiKey.trim()}`
+      requestHeaders['Authorization'] =
+        apiKey.startsWith('Bearer ') ? apiKey : `Bearer ${apiKey.trim()}`
     }
 
     // Check if it is Ollama native API format
