@@ -97,13 +97,23 @@ export function useDeleteRecord(collectionName: string) {
 
 export function useGetEmbedding() {
   return useMutation({
-    mutationFn: async ({ text, modelUrl, model }: { text: string; modelUrl: string; model?: string }) => {
+    mutationFn: async ({
+      text,
+      modelUrl,
+      model,
+      apiKey,
+    }: {
+      text: string
+      modelUrl: string
+      model?: string
+      apiKey?: string
+    }) => {
       const response = await fetch('/api/embedding', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ text, modelUrl, model }),
+        body: JSON.stringify({ text, modelUrl, model, apiKey }),
       })
 
       if (!response.ok) {

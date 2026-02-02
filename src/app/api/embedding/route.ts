@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server'
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { text, modelUrl, model = 'text-embedding-3-small' } = body
+    const { text, modelUrl, model = 'text-embedding-3-small', apiKey } = body
 
     if (!text) {
       return NextResponse.json(
@@ -26,14 +26,21 @@ export async function POST(request: Request) {
 
     let embedding: number[]
 
+    const requestHeaders: Record<string, string> = {
+      'Content-Type': 'application/json',
+    }
+    if (apiKey?.trim()) {
+      requestHeaders['Authorization'] = apiKey.startsWith('Bearer ')
+        ? apiKey
+        : `Bearer ${apiKey.trim()}`
+    }
+
     // Check if it is Ollama native API format
     if (modelUrl.includes('/api/embeddings') || modelUrl.includes('/api/embed')) {
       // Use Ollama native API format directly
       const response = await fetch(modelUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: requestHeaders,
         body: JSON.stringify({
           model: model || 'llama2',
           prompt: text,
@@ -52,9 +59,7 @@ export async function POST(request: Request) {
       // Use fetch directly, without using OpenAI SDK
       const response = await fetch(modelUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: requestHeaders,
         body: JSON.stringify({
           model: model,
           input: text,
@@ -74,7 +79,7 @@ export async function POST(request: Request) {
     } else {
       // Use OpenAI SDK (for base URL: OpenAI, LM Studio, Ollama OpenAI compatible mode)
       const openai = new OpenAI({
-        apiKey: 'dummy-key', // Some embedding services don't require a key
+        apiKey: apiKey?.trim() || 'dummy-key',
         baseURL: modelUrl,
       })
 

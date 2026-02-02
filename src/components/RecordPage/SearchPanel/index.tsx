@@ -73,6 +73,7 @@ const SearchPanel = () => {
         text: originalText,
         modelUrl: config.embeddingModelUrl,
         model: config.embeddingModel,
+        apiKey: config.embeddingModelApiKey || undefined,
       })
 
       // Save original text and dimension info for display

@@ -20,6 +20,7 @@ export default function SetupPage() {
   const [token, setToken] = useState(appConfig?.token || '')
   const [embeddingModelUrl, setEmbeddingModelUrl] = useState(appConfig?.embeddingModelUrl || '')
   const [embeddingModel, setEmbeddingModel] = useState(appConfig?.embeddingModel || 'text-embedding-3-small')
+  const [embeddingModelApiKey, setEmbeddingModelApiKey] = useState(appConfig?.embeddingModelApiKey ?? '')
 
   useEffect(() => {
     if (appConfig != null && appConfig.connectionString) {
@@ -66,6 +67,7 @@ export default function SetupPage() {
       database,
       embeddingModelUrl,
       embeddingModel,
+      embeddingModelApiKey: embeddingModelApiKey.trim() || '',
     })
     queryClient.setQueryData(['config'], {
       connectionString: formattedConnectionString,
@@ -73,6 +75,7 @@ export default function SetupPage() {
       database,
       embeddingModelUrl,
       embeddingModel,
+      embeddingModelApiKey: embeddingModelApiKey.trim() || '',
     })
     router.push('/collections')
   }
@@ -122,6 +125,16 @@ export default function SetupPage() {
           placeholder="text-embedding-3-small"
           value={embeddingModel}
           onChange={e => setEmbeddingModel(e.currentTarget.value)}
+          mt="md"
+        />
+        <TextInput
+          label="Embedding Model API Key (Optional)"
+          description="API Key for the embedding service. Sent as Authorization: Bearer &lt;key&gt;. Leave empty for local/no-auth services."
+          placeholder="sk-..."
+          value={embeddingModelApiKey}
+          onChange={e => setEmbeddingModelApiKey(e.currentTarget.value)}
+          type="password"
+          autoComplete="off"
           mt="md"
         />
         <Radio.Group label="Authentication Type" value={authType} onChange={setAuthType} mt="md">
