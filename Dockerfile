@@ -1,7 +1,8 @@
 # ========== 阶段 1：依赖安装（充分利用 Docker 层缓存）==========
 # 仅 package*.json 变化时此层及后续层才重建；日常改代码不会重新 npm ci
 FROM node:20-alpine AS deps
-RUN apk add --no-cache libc6-compat
+# node-gyp 编译原生扩展时需要 Python 和 C++ 工具链（部分依赖如 @xenova/transformers 等会触发）
+RUN apk add --no-cache libc6-compat python3 make g++
 WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN npm ci
